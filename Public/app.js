@@ -4,40 +4,74 @@
 let displayTable = document.getElementById('dragonsTable');
 let saveLocations = document.getElementById('save');
 
+
 const locations = ['Castle', 'Field', 'Mountain', 'Barn'];
 let allDragons = [];
 
+
 var MakeDragon = function (type, location) {
-  this.type = type;
-  this.location = location;
-  allDragons.push(this);
-};
+  // this.type = type;
+  // this.location = location;
+  // allDragons.push(this)
 
-MakeDragon.prototype.render = function (i) {
-
-    var trEl = document.createElement('tr');
-    var tdEl = document.createElement('td');
-    tdEl.textContent = allDragons[i].type;
-    trEl.appendChild(tdEl);
-    var tdEl = document.createElement('td');
-    tdEl.textContent = allDragons[i].location;
-    trEl.appendChild(tdEl);
-    var tdEl = document.createElement('select');
-    tdEl.id = i;
-    tdEl.setAttribute("onChange", "handleNewLocation(id)");
-    tdEl.appendChild(new Option(locations[0], locations[0]))
-    tdEl.appendChild(new Option(locations[1], locations[1]))
-    tdEl.appendChild(new Option(locations[2], locations[2]))
-    tdEl.appendChild(new Option(locations[3], locations[3]))
-
-    trEl.appendChild(tdEl);
-
-    dragonsTable.appendChild(trEl);
-
+  fetch('/api/v1/dragons')
+    .then(response => response.json())
+    .then(data => {
+      for (var i = 0; i < data.results.length; i++) {
+        allDragons.push(data.results[i]);
+      }
+      makeHeaderRow();
+      console.log(allDragons[0].type)
+      displayDragons();
+    });
+    
   };
+
+// MakeDragon.prototype.render = function (i) {
+
+//     var trEl = document.createElement('tr');
+//     var tdEl = document.createElement('td');
+//     tdEl.textContent = allDragons[i].type.value;
+//     trEl.appendChild(tdEl);
+//     var tdEl = document.createElement('td');
+//     tdEl.textContent = allDragons[i].location.value;
+//     trEl.appendChild(tdEl);
+//     var tdEl = document.createElement('select');
+//     tdEl.id = i;
+//     tdEl.setAttribute("onChange", "handleNewLocation(id)");
+//     tdEl.appendChild(new Option("Select"))
+//     tdEl.appendChild(new Option(locations[0], locations[0]))
+//     tdEl.appendChild(new Option(locations[1], locations[1]))
+//     tdEl.appendChild(new Option(locations[2], locations[2]))
+//     tdEl.appendChild(new Option(locations[3], locations[3]))
+
+//     trEl.appendChild(tdEl);
+
+//     dragonsTable.appendChild(trEl);
+
+//   };
     function displayDragons() {
       for (var i = 0; i < allDragons.length; i++) {
-        allDragons[i].render(i);
+        // allDragons[i].render(i);
+        var trEl = document.createElement('tr');
+        var tdEl = document.createElement('td');
+        tdEl.textContent = allDragons[i].type;
+        trEl.appendChild(tdEl);
+        var tdEl = document.createElement('td');
+        tdEl.textContent = allDragons[i].location;
+        trEl.appendChild(tdEl);
+        var tdEl = document.createElement('select');
+        tdEl.id = i;
+        tdEl.setAttribute("onChange", "handleNewLocation(id)");
+        tdEl.appendChild(new Option("Select"))
+        tdEl.appendChild(new Option(locations[0], locations[0]))
+        tdEl.appendChild(new Option(locations[1], locations[1]))
+        tdEl.appendChild(new Option(locations[2], locations[2]))
+        tdEl.appendChild(new Option(locations[3], locations[3]))
+
+        trEl.appendChild(tdEl);
+
+        dragonsTable.appendChild(trEl);
       }
     };
 
@@ -64,19 +98,22 @@ function handleNewLocation(id) {
   let target = document.getElementById(id);
   let value = target.options[target.selectedIndex].value;
   allDragons[id].location = value;
-  // dragonsTable.tr.remove();
   for (var i = document.getElementById("dragonsTable").rows.length; i > 0; i--) {
     document.getElementById("dragonsTable").deleteRow(i - 1);
   }
+  makeHeaderRow();
   displayDragons();
 };
 
 
-new MakeDragon('Blue Tipped Wing', locations[0]);
-new MakeDragon('Red Horned', locations[1]);
-new MakeDragon('Green Fire', locations[2]);
-new MakeDragon('Black Lightning', locations[3]);
+
+// new MakeDragon('Blue Tipped Wing', locations[0]);
+// new MakeDragon('Red Horned', locations[1]);
+// new MakeDragon('Green Fire', locations[2]);
+// new MakeDragon('Black Lightning', locations[3]);
+// console.log("MakeDragons: ", allDragons)
 
 
-makeHeaderRow();
-displayDragons();
+MakeDragon();
+// makeHeaderRow();
+// displayDragons();
