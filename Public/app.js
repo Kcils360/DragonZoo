@@ -1,19 +1,11 @@
 'use strict';
 
-// const dragon = require('./dragon.js');
 let displayTable = document.getElementById('dragonsTable');
 let saveLocations = document.getElementById('save');
-
-
-const locations = ['Castle', 'Field', 'Mountain', 'Barn'];
 let allDragons = [];
+const locations = ['Castle', 'Field', 'Mountain', 'Barn'];
 
-
-var MakeDragon = function (type, location) {
-  // this.type = type;
-  // this.location = location;
-  // allDragons.push(this)
-
+var MakeDragon = function () {
   fetch('/api/v1/dragons')
     .then(response => response.json())
     .then(data => {
@@ -21,59 +13,33 @@ var MakeDragon = function (type, location) {
         allDragons.push(data.results[i]);
       }
       makeHeaderRow();
-      console.log(allDragons[0].type)
       displayDragons();
     });
-    
-  };
 
-// MakeDragon.prototype.render = function (i) {
+};
 
-//     var trEl = document.createElement('tr');
-//     var tdEl = document.createElement('td');
-//     tdEl.textContent = allDragons[i].type.value;
-//     trEl.appendChild(tdEl);
-//     var tdEl = document.createElement('td');
-//     tdEl.textContent = allDragons[i].location.value;
-//     trEl.appendChild(tdEl);
-//     var tdEl = document.createElement('select');
-//     tdEl.id = i;
-//     tdEl.setAttribute("onChange", "handleNewLocation(id)");
-//     tdEl.appendChild(new Option("Select"))
-//     tdEl.appendChild(new Option(locations[0], locations[0]))
-//     tdEl.appendChild(new Option(locations[1], locations[1]))
-//     tdEl.appendChild(new Option(locations[2], locations[2]))
-//     tdEl.appendChild(new Option(locations[3], locations[3]))
+function displayDragons() {
+  for (var i = 0; i < allDragons.length; i++) {
+    var trEl = document.createElement('tr');
+    var tdEl = document.createElement('td');
+    tdEl.textContent = allDragons[i].type;
+    trEl.appendChild(tdEl);
+    var tdEl = document.createElement('td');
+    tdEl.textContent = allDragons[i].location;
+    trEl.appendChild(tdEl);
+    var tdEl = document.createElement('select');
+    tdEl.id = i;
+    tdEl.setAttribute("onChange", "handleNewLocation(id)");
+    tdEl.appendChild(new Option("Select"))
+    tdEl.appendChild(new Option(locations[0], locations[0]))
+    tdEl.appendChild(new Option(locations[1], locations[1]))
+    tdEl.appendChild(new Option(locations[2], locations[2]))
+    tdEl.appendChild(new Option(locations[3], locations[3]))
 
-//     trEl.appendChild(tdEl);
-
-//     dragonsTable.appendChild(trEl);
-
-//   };
-    function displayDragons() {
-      for (var i = 0; i < allDragons.length; i++) {
-        // allDragons[i].render(i);
-        var trEl = document.createElement('tr');
-        var tdEl = document.createElement('td');
-        tdEl.textContent = allDragons[i].type;
-        trEl.appendChild(tdEl);
-        var tdEl = document.createElement('td');
-        tdEl.textContent = allDragons[i].location;
-        trEl.appendChild(tdEl);
-        var tdEl = document.createElement('select');
-        tdEl.id = i;
-        tdEl.setAttribute("onChange", "handleNewLocation(id)");
-        tdEl.appendChild(new Option("Select"))
-        tdEl.appendChild(new Option(locations[0], locations[0]))
-        tdEl.appendChild(new Option(locations[1], locations[1]))
-        tdEl.appendChild(new Option(locations[2], locations[2]))
-        tdEl.appendChild(new Option(locations[3], locations[3]))
-
-        trEl.appendChild(tdEl);
-
-        dragonsTable.appendChild(trEl);
-      }
-    };
+    trEl.appendChild(tdEl);
+    dragonsTable.appendChild(trEl);
+  }
+};
 
 function makeHeaderRow() {
   var trEl = document.createElement('tr');
@@ -91,13 +57,13 @@ function makeHeaderRow() {
   dragonsTable.appendChild(trEl);
 };
 
-
-//-------------------------------BUTTON EVENT-----------------------------
+//-----------------------------------------------------
 function handleNewLocation(id) {
-  event.preventDefault();
   let target = document.getElementById(id);
   let value = target.options[target.selectedIndex].value;
   allDragons[id].location = value;
+
+  putData('/api/v1/dragons/0', allDragons[id]);
   for (var i = document.getElementById("dragonsTable").rows.length; i > 0; i--) {
     document.getElementById("dragonsTable").deleteRow(i - 1);
   }
@@ -105,15 +71,14 @@ function handleNewLocation(id) {
   displayDragons();
 };
 
-
-
-// new MakeDragon('Blue Tipped Wing', locations[0]);
-// new MakeDragon('Red Horned', locations[1]);
-// new MakeDragon('Green Fire', locations[2]);
-// new MakeDragon('Black Lightning', locations[3]);
-// console.log("MakeDragons: ", allDragons)
-
-
 MakeDragon();
-// makeHeaderRow();
-// displayDragons();
+
+//-------------------HTTP PUT---------------------
+var putData = function (url, data) {
+  fetch(url, {
+    headers: { "Content-Type": "application/json; charset=utf-8" },
+    method: 'put',
+    body: JSON.stringify(data),
+  })
+    .then(response => response.json());
+};
