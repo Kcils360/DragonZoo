@@ -1,0 +1,44 @@
+nav {
+  height: 2.5em;
+	background-color: #111111; 
+	font-family: 'Uncial Antiqua', cursive;
+  font-size: 2em;
+  line-height: 2em;
+  color: #CE3527;
+  text-align: center;
+}
+
+section {
+  background-image: url(../assets/dragonmap.jpg);
+  background-repeat: no-repeat;
+  background-size: cover;
+}
+
+#dragonsTable {
+  display: block;
+  width: 80%;
+  margin: 0 auto;
+  font-size: 1.5em;
+  border-radius: 10px;
+}
+tr {
+  width: 100%;
+  vertical-align: center;
+}
+
+th {
+  padding: 15px;
+  font-weight: bold;
+}
+td {
+  padding: 15px;
+  text-align: left;
+}
+  tr:nth-child(even) {
+    background-color: #f2f2f2;
+  }
+
+  tr:nth-child(odd) {
+    background-color: #bfbfbf;
+  }
+
